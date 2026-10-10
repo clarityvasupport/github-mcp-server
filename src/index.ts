@@ -1372,4 +1372,32 @@ export default new OAuthProvider({
 	clientRegistrationEndpoint: "/register",
 	defaultHandler: GitHubHandler as any,
 	tokenEndpoint: "/token",
+	resolveExternalToken: async ({ token }) => {
+		if (!/^(ghp_|ghs_|gho_|ghu_|ghr_|github_pat_)/.test(token)) return null;
+
+		const response = await fetch("https://api.github.com/user", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/vnd.github+json",
+				"User-Agent": "github-mcp-server",
+				"X-GitHub-Api-Version": "2022-11-28",
+			},
+		});
+		if (!response.ok) return null;
+
+		const user = (await response.json()) as {
+			login: string;
+			name?: string;
+			email?: string;
+		};
+
+		return {
+			props: {
+				accessToken: token,
+				login: user.login,
+				name: user.name ?? user.login,
+				email: user.email ?? "",
+			},
+		};
+	},
 });
