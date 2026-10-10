@@ -1,0 +1,61 @@
+/**
+ * Cloudflare Workers Configuration for GitHub MCP Server
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "github-mcp-server",
+	"main": "src/index.ts",
+	"account_id": "your_cloudflare_account_id",
+	"compatibility_date": "2025-03-10",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	/**
+   * IMPORTANT: Set these secrets using wrangler CLI:
+   * 
+   * npx wrangler secret put OAUTH_GITHUB_CLIENT_ID
+   * npx wrangler secret put OAUTH_GITHUB_CLIENT_SECRET
+   * npx wrangler secret put COOKIE_ENCRYPTION_KEY
+   * 
+   * Generate COOKIE_ENCRYPTION_KEY with: openssl rand -hex 32
+   */
+	"migrations": [
+		{
+			"new_sqlite_classes": [
+				"GitHubMCP"
+			],
+			"tag": "v1"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "GitHubMCP",
+				"name": "MCP_OBJECT"
+			}
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "OAUTH_KV",
+			"id": "65aacb90f6934e55a2b6cd4431788b61"
+		}
+	],
+	/**
+   * Cloudflare Access Integration (Optional)
+   * 
+   * To enable Cloudflare Access authentication:
+   * 1. Set up a Cloudflare Access application for this worker
+   * 2. Configure your Access policies (who can access)
+   * 3. The worker will automatically validate Access JWT tokens
+   * 
+   * See CLOUDFLARE_ACCESS.md for detailed setup instructions
+   */
+	"observability": {
+		"enabled": true
+	},
+	"dev": {
+		"port": 8788
+	}
+}
