@@ -6,7 +6,7 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "github-mcp-server",
 	"main": "src/index.ts",
-	"account_id": "your_cloudflare_account_id",
+	"account_id": "462fe9ef1a7169a830c9d9958e37ea06",
 	"compatibility_date": "2025-03-10",
 	"compatibility_flags": [
 		"nodejs_compat"
